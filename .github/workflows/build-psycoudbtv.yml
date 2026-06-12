@@ -1,0 +1,47 @@
+name: Build psycoudbtv package
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-zip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Build site-packages zip
+        run: python scripts/build_zip.py
+
+      - name: Show dist
+        run: ls -lh dist/
+
+      - name: Smoke test (extract + import)
+        run: |
+          mkdir -p _sp
+          python -m zipfile -e dist/*.zip _sp/
+          PYTHONPATH=_sp python -c "import psycoudbtv; print('import OK', psycoudbtv.__all__)"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: psycoudbtv-zip
+          path: dist/*.zip
+          if-no-files-found: error
+
+      - name: Attach to release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip
