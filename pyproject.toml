@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "psycoudbtv"
+version = "0.4.2"
+description = "pgvector support for Python, renamed to psycoudbtv (for UNVDB / UDB-TV)"
+readme = "README.md"
+license = "MIT"
+requires-python = ">= 3.8"
+dependencies = [
+]
+
+[project.urls]
+Homepage = "https://github.com/IhoverI/psycoudbtv"
+
+[tool.setuptools.packages.find]
+include = ["psycoudbtv*"]
